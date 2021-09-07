@@ -1,18 +1,21 @@
-const mongoose = require("mongoose")
+const express = require('express')
+const connectDB = require('./config/db')
+const Product = require('./models/Product')
 
-const gameSchema = new mongoose.Schema({
-    game : {
-        type : String,
-        required : true,
-    },
+connectDB()
+const app = express();
+app.use(express.json());
 
-    last : {
-        type : Number,
-        required : true,
+app.get('/',async(req,res) =>{
+    const product= new Product({name : "car" ,price : "120000"})
+
+    try {
+        await product.save()
+    } catch (err) {
+        console.log(err);
     }
-
 })
 
-const Game = mongoose.model("games",gameSchema);
+const PORT = process.env.PORT || 5000;
+app.listen(PORT,()=> console.log(`server running on port ${PORT}`));
 
-module.exports = Game;
