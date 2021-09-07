@@ -1,21 +1,34 @@
-const express = require('express')
-const connectDB = require('./config/db')
-const Product = require('./models/Product')
+ const express = require("express");
+ const mongoose = require("mongoose");
+ const app = express();
+ const GameModel= require('./models/Game')
 
-connectDB()
-const app = express();
-app.use(express.json());
+ app.use(express.json()) // allow us to recieve information from front end in json format
 
-app.get('/',async(req,res) =>{
-    const product= new Product({name : "car" ,price : "120000"})
+ const connectDB = async () => {
+     try{
+         await mongoose.connect("mongodb+srv://newuser:a0qGHvV42uCXJp5H@crudcluster.zu6t0.mongodb.net/game?retryWrites=true&w=majority",{
+             useNewUrlParser: true,
+             useUnifiedTopology:true,
+         });
+         console.log("mongodb connected succesfully");
+     } catch(error){
+         console.log("failed to connect to mongodb");
+         process.exit(1);
+     }  
+ }  
+ connectDB();
+ 
+ app.get('/', async (req, res) =>{
+     
+     const game = new GameModel({game : "minesweeper", last : 200})
+     try{
+        await game.save()
+     } catch(error) {
+         console.log(error);
+     }
+ })
 
-    try {
-        await product.save()
-    } catch (error) {
-        console.log(err);
-    }
-})
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT,()=> console.log(`server running on port ${PORT}`));
-
+ app.listen(3001, () => {
+     console.log(`server running on PORT 3001....!`)
+ })
